@@ -1,0 +1,1378 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Big data,Spark," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="Download Spark with hadoop12$ wget http://d3kbcqa49mib13.cloudfront.net/spark-2.2.0-bin-hadoop2.7.tgz$ tar xvf spark-2.2.0-bin-hadoop2.7.tgz Spark shell Read parquet files  12345$ cd spark-2.2.0-bin-h">
+<meta name="keywords" content="Big data,Spark">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spark Operations">
+<meta property="og:url" content="http://cubeanliu.com/2017/11/03/SparkOperations/index.html">
+<meta property="og:site_name" content="Cubean Blog">
+<meta property="og:description" content="Download Spark with hadoop12$ wget http://d3kbcqa49mib13.cloudfront.net/spark-2.2.0-bin-hadoop2.7.tgz$ tar xvf spark-2.2.0-bin-hadoop2.7.tgz Spark shell Read parquet files  12345$ cd spark-2.2.0-bin-h">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-05-08T00:35:26.174Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spark Operations">
+<meta name="twitter:description" content="Download Spark with hadoop12$ wget http://d3kbcqa49mib13.cloudfront.net/spark-2.2.0-bin-hadoop2.7.tgz$ tar xvf spark-2.2.0-bin-hadoop2.7.tgz Spark shell Read parquet files  12345$ cd spark-2.2.0-bin-h">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://cubeanliu.com/2017/11/03/SparkOperations/"/>
+
+
+
+
+
+  <title>Spark Operations | Cubean Blog</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', '[object Object]', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Cubean Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Change the world with AI and IoT</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cubeanliu.com/2017/11/03/SparkOperations/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cubean Liu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cubean Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Spark Operations</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-11-03T18:54:01+11:00">
+                2017-11-03
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/11/03/SparkOperations/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/11/03/SparkOperations/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/11/03/SparkOperations/" class="leancloud_visitors" data-flag-title="Spark Operations">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Download-Spark-with-hadoop"><a href="#Download-Spark-with-hadoop" class="headerlink" title="Download Spark with hadoop"></a>Download Spark with hadoop</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ wget http://d3kbcqa49mib13.cloudfront.net/spark-2.2.0-bin-hadoop2.7.tgz</span><br><span class="line">$ tar xvf spark-2.2.0-bin-hadoop2.7.tgz</span><br></pre></td></tr></table></figure>
+<h2 id="Spark-shell"><a href="#Spark-shell" class="headerlink" title="Spark shell"></a>Spark shell</h2><ul>
+<li>Read parquet files</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">cd</span> spark-2.2.0-bin-hadoop2.7/</span><br><span class="line">$ bin/spark-shell</span><br><span class="line"></span><br><span class="line">scala&gt; val df = spark.read.parquet(<span class="string">"file:///home/username/spark-warehouse/sample_dataset"</span>)</span><br><span class="line">scala&gt; df.show</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Run scala script in spark-shell</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/spark-shell -i loadalldatasets.scala</span><br></pre></td></tr></table></figure>
+<h2 id="Spark-cluster"><a href="#Spark-cluster" class="headerlink" title="Spark cluster"></a>Spark cluster</h2><ul>
+<li>Run slave and master nodes manually:</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sbin/start-master.sh</span><br><span class="line">sbin/start-slave.sh spark://&lt;MasterIP&gt;:7077</span><br></pre></td></tr></table></figure>
+<a id="more"></a>
+<h2 id="spark-submit"><a href="#spark-submit" class="headerlink" title="spark-submit"></a>spark-submit</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bin/spark-submit --class <span class="string">"spark.computing.SimpleApp"</span> --master spark://&lt;MasterIP&gt;:7077 ~/spark-computing_2.11-1.0.jar</span><br></pre></td></tr></table></figure>
+<h2 id="SparkSession-exmaple"><a href="#SparkSession-exmaple" class="headerlink" title="SparkSession exmaple"></a>SparkSession exmaple</h2><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> org.apache.spark.sql.<span class="type">SparkSession</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> spark = <span class="type">SparkSession</span>.builder().appName(<span class="string">"myApp"</span>).config(<span class="string">"spark.some.config.option"</span>, <span class="string">"some-value"</span>).getOrCreate()</span><br><span class="line"></span><br><span class="line"><span class="comment">// Encoders for most common types are automatically provided by import spark.implicits._</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// Read in the parquet file created above</span></span><br><span class="line"><span class="comment">// Parquet files are self-describing so the schema is preserved</span></span><br><span class="line"><span class="comment">// The result of loading a Parquet file is also a DataFrame</span></span><br><span class="line"><span class="keyword">val</span> parquetFileDF = spark.read.parquet(<span class="string">"spark-warehouse/sample_dataset"</span>)</span><br><span class="line">parquetFileDF.show</span><br><span class="line"></span><br><span class="line"><span class="comment">// Spark also supports pulling data sets into a cluster-wide in-memory cache. </span></span><br><span class="line"><span class="comment">// Next function will make dataset to be cached.</span></span><br><span class="line">parquetFileDF.cache</span><br><span class="line"></span><br><span class="line"><span class="comment">// Parquet files can also be used to create a temporary view and then used in SQL statements</span></span><br><span class="line">parquetFileDF.createOrReplaceTempView(<span class="string">"parquetFile"</span>)</span><br><span class="line"><span class="keyword">val</span> namesDF = spark.sql(<span class="string">"SELECT * FROM parquetFile WHERE confidence_level='1.Above 85'"</span>)</span><br><span class="line">namesDF.map(attributes =&gt; <span class="string">"question: "</span> + attributes(<span class="number">0</span>)).show</span><br></pre></td></tr></table></figure>
+<h2 id="Read-csv-file-as-DataFrame"><a href="#Read-csv-file-as-DataFrame" class="headerlink" title="Read csv file as DataFrame"></a>Read csv file as DataFrame</h2><h3 id="1-spark-csv"><a href="#1-spark-csv" class="headerlink" title="1 spark-csv"></a>1 spark-csv</h3><p>For CSV, there is a separate library: spark-csv</p>
+<p>It’s CsvContext class provides csvFile method which can be used to load csv.</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> cars = sqlContext.csvFile(<span class="string">"cars.csv"</span>) <span class="comment">// uses</span></span><br></pre></td></tr></table></figure>
+<p>implicit class CsvContext</p>
+<h3 id="2-Parsing-CSV-in-Spark-2-0"><a href="#2-Parsing-CSV-in-Spark-2-0" class="headerlink" title="2 Parsing CSV in Spark 2.0"></a>2 Parsing CSV in Spark 2.0</h3><p>Spark SQL does have inbuilt CSV parser with Scala 2.11 API powered by databricks. </p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> conf = <span class="keyword">new</span> <span class="type">SparkConf</span>().setMaster(<span class="string">"local[2]"</span>).setAppName(<span class="string">"my app"</span>)</span><br><span class="line"><span class="keyword">val</span> sc = <span class="keyword">new</span> <span class="type">SparkContext</span>(conf)</span><br><span class="line"><span class="keyword">val</span> sparkSession = <span class="type">SparkSession</span>.builder</span><br><span class="line">  .config(conf = conf)</span><br><span class="line">  .appName(<span class="string">"spark session example"</span>)</span><br><span class="line">  .getOrCreate()</span><br><span class="line">  </span><br><span class="line"><span class="keyword">val</span> df = sparkSession.read</span><br><span class="line">        .format(<span class="string">"org.apache.spark.csv"</span>)</span><br><span class="line">        .option(<span class="string">"header"</span>, <span class="string">"true"</span>) <span class="comment">//reading the headers</span></span><br><span class="line">        .option(<span class="string">"mode"</span>, <span class="string">"DROPMALFORMED"</span>)</span><br><span class="line">        .csv(<span class="string">"csv/file/path"</span>)</span><br></pre></td></tr></table></figure>
+<p>Dependency:</p>
+<p>“org.apache.spark” %% “spark-sql_2.11” % 2.0.0,</p>
+<h2 id="SQL-operations"><a href="#SQL-operations" class="headerlink" title="SQL operations"></a>SQL operations</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">// Check the configure, it also could be checked <span class="keyword">in</span> http://&lt;MasterIP&gt;:4041/environment/</span><br><span class="line"></span><br><span class="line">scala&gt; sc.getConf.getAll</span><br><span class="line"></span><br><span class="line">res48: Array[(String, String)] = Array((spark.driver.port,39657), </span><br><span class="line">(spark.repl.class.outputDir,/tmp/spark-c04b757f-ba28-41ce-aa1a-fb44000d2a3f/repl-ce272ce7-2756-44ab-836c-ed31012eb439), </span><br><span class="line">(spark.app.name,Spark shell), </span><br><span class="line">(spark.home,/home/username/spark-2.2.0-bin-hadoop2.7), </span><br><span class="line">(spark.sql.catalogImplementation,hive), </span><br><span class="line">(spark.driver.host,&lt;MasterIP&gt;), </span><br><span class="line">(spark.jars,<span class="string">""</span>), </span><br><span class="line">(spark.master,<span class="built_in">local</span>[*]), </span><br><span class="line">(spark.executor.id,driver), </span><br><span class="line">(spark.submit.deployMode,client), </span><br><span class="line">(spark.repl.class.uri,spark://&lt;MasterIP&gt;:39657/classes), </span><br><span class="line">(spark.app.id,<span class="built_in">local</span>-1504752595101))</span><br><span class="line"></span><br><span class="line">scala&gt; sc.getConf.getExecutorEnv</span><br><span class="line">res52: Seq[(String, String)] = WrappedArray()</span><br><span class="line"></span><br><span class="line">scala&gt; sc.getConf.setExecutorEnv(<span class="string">"spark.executor.memory"</span>, <span class="string">"6g"</span>)</span><br><span class="line">res54: org.apache.spark.SparkConf = org.apache.spark.SparkConf@50d5ddf2</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">// Register the DataFrame as a SQL temporary view</span><br><span class="line">scala&gt; dfhug.createOrReplaceTempView(<span class="string">"dhhuge"</span>)</span><br><span class="line"></span><br><span class="line">scala&gt; :paste</span><br><span class="line"></span><br><span class="line">import java.time.&#123;Duration, LocalDate, LocalDateTime, ZoneId&#125;</span><br><span class="line"></span><br><span class="line">// Cache nothing</span><br><span class="line">val startTime = LocalDateTime.now</span><br><span class="line">val num = spark.sql(<span class="string">"select department, transaction_date, quantity, transaction_date from dhhuge where (((isnotnull(department) and (department = 'grocery')) and isnotnull(transaction_date)) and (transaction_date &gt;= '2012-12-30')) and (transaction_date &lt;= '2016-12-07')"</span>).count</span><br><span class="line">println(s<span class="string">"Row num is <span class="variable">$num</span>"</span>)</span><br><span class="line">val endTime = LocalDateTime.now</span><br><span class="line">val span = Duration.between(startTime, endTime)</span><br><span class="line">println(s<span class="string">"Query time is <span class="variable">$&#123;span.toHours&#125;</span>:<span class="variable">$&#123;span.toMinutes&#125;</span>:<span class="variable">$&#123;span.toMillis / 1000&#125;</span>:<span class="variable">$&#123;span.toMillis % 1000&#125;</span>"</span>)</span><br><span class="line"></span><br><span class="line">// Cache the whole dataset only.</span><br><span class="line">dfhug.cache</span><br><span class="line">val startTime = LocalDateTime.now</span><br><span class="line">val num = spark.sql(<span class="string">"select department, transaction_date, quantity, transaction_date from dhhuge where (((isnotnull(department) and (department = 'grocery')) and isnotnull(transaction_date)) and (transaction_date &gt;= '2012-12-30')) and (transaction_date &lt;= '2016-12-07')"</span>).cache.count</span><br><span class="line">println(s<span class="string">"Row num is <span class="variable">$num</span>"</span>)</span><br><span class="line">val endTime = LocalDateTime.now</span><br><span class="line">val span = Duration.between(startTime, endTime)</span><br><span class="line">println(s<span class="string">"Query time is <span class="variable">$&#123;span.toHours&#125;</span>:<span class="variable">$&#123;span.toMinutes&#125;</span>:<span class="variable">$&#123;span.toMillis / 1000&#125;</span>:<span class="variable">$&#123;span.toMillis % 1000&#125;</span>"</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">// Cache middle result</span><br></pre></td></tr></table></figure>
+<h2 id="MySQL-operations"><a href="#MySQL-operations" class="headerlink" title="MySQL operations"></a>MySQL operations</h2><ul>
+<li>Create table</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">CREATE TABLE `sample_dataset` (</span><br><span class="line">  `household_key` VARCHAR(45) NULL,</span><br><span class="line">  `basket_id` VARCHAR(45) NULL,</span><br><span class="line">  `product_id` VARCHAR(45) NULL,</span><br><span class="line">  `transaction_date` TIMESTAMP(6) NULL,</span><br><span class="line">  `department` VARCHAR(45) NULL,</span><br><span class="line">  `brand` VARCHAR(45) NULL,</span><br><span class="line">  `age_desc` VARCHAR(45) NULL,</span><br><span class="line">  `income_desc` VARCHAR(45) NULL,</span><br><span class="line">  `homeowner_desc` VARCHAR(45) NULL,</span><br><span class="line">  `household_size_desc` VARCHAR(45) NULL,</span><br><span class="line">  `price` DOUBLE NULL,</span><br><span class="line">  `discount` DOUBLE NULL,</span><br><span class="line">  `transaction_time` VARCHAR(45) NULL,</span><br><span class="line">  `commodity` VARCHAR(45) NULL,</span><br><span class="line">  `household_type` VARCHAR(45) NULL,</span><br><span class="line">  `household_size` VARCHAR(45) NULL,</span><br><span class="line">  `quantity` INT NULL,</span><br><span class="line">  `sales` DOUBLE NULL)</span><br><span class="line">ENGINE = MyISAM</span><br><span class="line">DEFAULT CHARACTER SET = utf8</span><br><span class="line">COLLATE = utf8_unicode_ci;</span><br></pre></td></tr></table></figure>
+<ul>
+<li>Write dataset into MySQL</li>
+</ul>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">$ wget http://dev.mysql.com/get/Downloads/Connector-J/mysql-connector-java-5.1.38.tar.gz</span><br><span class="line">$ tar -vxf mysql-connector-java-5.1.38.tar.gz</span><br><span class="line">$ sudo cp mysql-connector-java-5.1.38/mysql-connector-java-5.1.38-bin.jar /usr/share/java/</span><br><span class="line">$ <span class="built_in">cd</span> /usr/share/java/</span><br><span class="line">$ sudo ln -s  mysql-connector-java-5.1.38-bin.jar mysql-connector-java.jar</span><br><span class="line"></span><br><span class="line">$ spark-shell --jars /usr/share/java/mysql-connector-java.jar</span><br></pre></td></tr></table></figure>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">val prop = new java.util.Properties</span><br><span class="line">prop.setProperty(<span class="string">"driver"</span>, <span class="string">"com.mysql.jdbc.Driver"</span>)</span><br><span class="line">prop.setProperty(<span class="string">"user"</span>, <span class="string">"username"</span>)</span><br><span class="line">prop.setProperty(<span class="string">"password"</span>, <span class="string">"userpsw"</span>) </span><br><span class="line"> </span><br><span class="line">//jdbc mysql url - destination database is named <span class="string">"data"</span></span><br><span class="line">val url = <span class="string">"jdbc:mysql://127.0.0.1/testCase?useSSL=false"</span></span><br><span class="line"> </span><br><span class="line">//destination database table </span><br><span class="line">val table = <span class="string">"sample_dataset"</span></span><br><span class="line"> </span><br><span class="line">//write data from spark dataframe to database</span><br><span class="line">dfhug.write.mode(<span class="string">"append"</span>).jdbc(url, table, prop)</span><br></pre></td></tr></table></figure>
+<h2 id="Cloudera-Platform"><a href="#Cloudera-Platform" class="headerlink" title="Cloudera Platform"></a>Cloudera Platform</h2><p>http://<masterip>:7180/cmf/login</masterip></p>
+<h2 id="AWS-EMR"><a href="#AWS-EMR" class="headerlink" title="AWS EMR"></a>AWS EMR</h2><p>MyLocal</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$ scp .ssh/cubeanAWS.pem hadoop@ec2-52-65-19-56.ap-southeast-2.compute.amazonaws.com:~</span><br><span class="line">$ ssh -i ~/.ssh/cubeanAWS.pem hadoop@ec2-52-65-19-56.ap-southeast-2.compute.amazonaws.com</span><br></pre></td></tr></table></figure>
+<p>Master with hadoop:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="built_in">eval</span> <span class="string">"<span class="variable">$(ssh-agent -s)</span>"</span> &amp;&amp; ssh-add cubeanAWS.pem</span><br></pre></td></tr></table></figure>
+<p>Get the IPs of the slave nodes:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">$ hdfs dfsadmin -report | grep ^Name | cut -f2 -d: | cut -f2 -d<span class="string">' '</span></span><br><span class="line"></span><br><span class="line">The <span class="built_in">log</span> files are <span class="keyword">in</span> /mnt/var/<span class="built_in">log</span>/hadoop</span><br><span class="line"></span><br><span class="line"><span class="comment">#Change java version</span></span><br><span class="line"><span class="comment">#$ sudo /usr/sbin/alternatives --config java</span></span><br><span class="line"><span class="comment">#Change to root</span></span><br><span class="line"><span class="comment">#$ sudo -i</span></span><br><span class="line"></span><br><span class="line">////Start master with hadoop user</span><br><span class="line">(Once) $ cat cubeanAWS.pem &gt;&gt; ~/.ssh/authorized_keys</span><br><span class="line">$ <span class="built_in">eval</span> <span class="string">"<span class="variable">$(ssh-agent -s)</span>"</span> &amp;&amp; ssh-add cubeanAWS.pem</span><br><span class="line">$ sudo /usr/lib/spark/sbin/start-master.sh</span><br><span class="line"></span><br><span class="line">////Start slaves (use same node)</span><br><span class="line">$ sudo ./start-slave.sh &lt;MasterIP&gt;:7077</span><br><span class="line"></span><br><span class="line">////Test</span><br><span class="line">$ spark-shell --master spark://&lt;MasterIP&gt;:7077</span><br></pre></td></tr></table></figure>
+<p>To launch a Spark application in cluster mode:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ ./bin/spark-submit --class path.to.your.Class --master yarn --deploy-mode cluster [options] &lt;app jar&gt; [app options]</span><br></pre></td></tr></table></figure>
+<p>To launch a Spark application in client mode, do the same, but replace cluster with client. The following shows how you can run spark-shellin client mode:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ sudo spark-shell --master yarn --deploy-mode cluster</span><br></pre></td></tr></table></figure>
+<p>The master URL passed to Spark can be in one of the following formats:</p>
+<p>Master URL    Meaning</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">local	Run Spark locally with one worker thread (i.e. no parallelism at all).</span><br><span class="line">local[K]	Run Spark locally with K worker threads (ideally, set this to the number of cores on your machine).</span><br><span class="line">local[*]	Run Spark locally with as many worker threads as logical cores on your machine.</span><br><span class="line">spark://HOST:PORT	Connect to the given Spark standalone cluster master. The port must be whichever one your master is configured to use, which is 7077 by default.</span><br><span class="line">mesos://HOST:PORT	Connect to the given Mesos cluster. The port must be whichever one your is configured to use, which is 5050 by default. Or, for a Mesos cluster using ZooKeeper, use mesos://zk://.... To submit with --deploy-mode cluster, the HOST:PORT should be configured to connect to the MesosClusterDispatcher.</span><br><span class="line">yarn	Connect to a YARN cluster in client or cluster mode depending on the value of --deploy-mode. The cluster location will be found based on the HADOOP_CONF_DIR or YARN_CONF_DIR variable.</span><br></pre></td></tr></table></figure>
+<p>Examples:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line">MASTER=yarn-client spark-shell</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">val file = sc.textFile(<span class="string">"s3://support.elasticmapreduce/bigdatademo/sample/wiki"</span>)</span><br><span class="line"> </span><br><span class="line">val reducedList = file.map(l =&gt; l.split(<span class="string">" "</span>)).map(l =&gt; (l(1), l(2).toInt)).reduceByKey(_+_, 3)</span><br><span class="line"> </span><br><span class="line">reducedList.cache</span><br><span class="line"> </span><br><span class="line">val sortedList = reducedList.map(x =&gt; (x._2, x._1)).sortByKey(<span class="literal">false</span>).take(50)</span><br><span class="line">////////////////////////////////////////////////////////////////////////////////////////////////</span><br><span class="line">MASTER=yarn-client spark-sql --executor-memory 4G</span><br><span class="line"></span><br><span class="line">SET spark.sql.shuffle.partitions=10;</span><br><span class="line">create external table wikistat (projectcode string, pagename string, pageviews int, pagesize int) ROW FORMAT DELIMITED FIELDS TERMINATED BY <span class="string">' '</span> location <span class="string">'s3://support.elasticmapreduce/bigdatademo/sample/wiki'</span>;</span><br><span class="line">CACHE TABLE wikistat;</span><br><span class="line">select pagename, sum(pageviews) c from wikistat group by pagename order by c desc <span class="built_in">limit</span> 10;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">////////////////////////////////////////////////////////////////////////////////////////////////</span><br><span class="line">package org.apache.spark.examples</span><br><span class="line">import scala.math.random</span><br><span class="line">import org.apache.spark._</span><br><span class="line"></span><br><span class="line">/** Computes an approximation to pi */</span><br><span class="line">object SparkPi &#123;</span><br><span class="line">  def main(args: Array[String]) &#123;</span><br><span class="line">    val conf = new SparkConf().setAppName(<span class="string">"Spark Pi"</span>)</span><br><span class="line">    val spark = new SparkContext(conf)</span><br><span class="line">    val slices = <span class="keyword">if</span> (args.length &gt; 0) args(0).toInt <span class="keyword">else</span> 2</span><br><span class="line">    val n = math.min(100000L * slices, Int.MaxValue).toInt // avoid overflow</span><br><span class="line">    val count = spark.parallelize(1 until n, slices).map &#123; i =&gt;</span><br><span class="line">      val x = random * 2 - 1</span><br><span class="line">      val y = random * 2 - 1</span><br><span class="line">      <span class="keyword">if</span> (x*x + y*y &lt; 1) 1 <span class="keyword">else</span> 0</span><br><span class="line">    &#125;.reduce(_ + _)</span><br><span class="line">    println(<span class="string">"Pi is roughly "</span> + 4.0 * count / n)</span><br><span class="line">    spark.stop()</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>Name of interface URI</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">YARN ResourceManager</span><br><span class="line">http://master-public-dns-name:8088/</span><br><span class="line"></span><br><span class="line">YARN NodeManager</span><br><span class="line">http://slave-public-dns-name:8042/</span><br><span class="line"></span><br><span class="line">Hadoop HDFS NameNode</span><br><span class="line">http://master-public-dns-name:50070/</span><br><span class="line"></span><br><span class="line">Hadoop HDFS DataNode</span><br><span class="line">http://slave-public-dns-name:50075/</span><br><span class="line"></span><br><span class="line">Spark HistoryServer</span><br><span class="line">http://master-public-dns-name:18080/</span><br><span class="line"></span><br><span class="line">Zeppelin</span><br><span class="line">http://master-public-dns-name:8890/</span><br><span class="line"></span><br><span class="line">Hue</span><br><span class="line">http://master-public-dns-name:8888/</span><br><span class="line"></span><br><span class="line">ssh -i ~/.ssh/cubeanAWS.pem -N -L 8888:ec2-52-65-19-56.ap-southeast-2.compute.amazonaws.com:8888 hadoop@ec2-52-65-19-56.ap-southeast-2.compute.amazonaws.com</span><br><span class="line"></span><br><span class="line">Ganglia</span><br><span class="line">http://master-public-dns-name/ganglia/</span><br><span class="line"></span><br><span class="line">HBase UI</span><br><span class="line">http://master-public-dns-name:16010/</span><br></pre></td></tr></table></figure>
+<h4 id="Parquet-files"><a href="#Parquet-files" class="headerlink" title="Parquet files"></a>Parquet files</h4><p><a href="https://developer.ibm.com/hadoop/2015/12/03/parquet-for-spark-sql/" target="_blank" rel="noopener">How-to: Convert Text to Parquet in Spark to Boost Performance</a></p>
+<p><a href="https://mapr.com/blog/evolving-parquet-self-describing-data-format-new-paradigms-consumerization-hadoop-data/" target="_blank" rel="noopener">Evolving Parquet as self-describing data format – New paradigms for consumerization of Hadoop data</a></p>
+<h2 id="Column-Operations"><a href="#Column-Operations" class="headerlink" title="Column Operations"></a>Column Operations</h2><h3 id="select-multiple-columns-at-once"><a href="#select-multiple-columns-at-once" class="headerlink" title="select multiple columns at once"></a>select multiple columns at once</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">val</span> columns = df.columns</span><br><span class="line"><span class="keyword">val</span> colSelect = <span class="type">Seq</span>(<span class="string">"sales"</span>, <span class="string">"transaction_date"</span>)</span><br><span class="line"><span class="keyword">val</span> colNames = columns.intersect(colSelect).map(name =&gt; col(name))</span><br><span class="line">df.select(colNames:_*).show</span><br></pre></td></tr></table></figure>
+<h3 id="extract-day-part"><a href="#extract-day-part" class="headerlink" title="extract day part"></a>extract day part</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">df.select(<span class="string">"transaction_date"</span>).withColumn(<span class="string">"year"</span>, year(df(<span class="string">"transaction_date"</span>))).show</span><br><span class="line">df.select(<span class="string">"transaction_date"</span>).withColumn(<span class="string">"month"</span>, month(df(<span class="string">"transaction_date"</span>))).show</span><br><span class="line">df.select(<span class="string">"transaction_date"</span>).withColumn(<span class="string">"week"</span>, weekofyear(df(<span class="string">"transaction_date"</span>))).show</span><br><span class="line">df.select(<span class="string">"transaction_date"</span>).withColumn(<span class="string">"weekday"</span>, from_unixtime(unix_timestamp(df(<span class="string">"transaction_date"</span>), <span class="string">"yyyy-MM-dd"</span>), <span class="string">"EEEEE"</span>)).show</span><br></pre></td></tr></table></figure>
+<p><em>Examples</em></p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">df</span><br><span class="line">.select(<span class="string">"transaction_date"</span>)</span><br><span class="line">.withColumn(<span class="string">"year"</span>, year(df(<span class="string">"transaction_date"</span>)))</span><br><span class="line">.withColumn(<span class="string">"month"</span>, month(df(<span class="string">"transaction_date"</span>)))</span><br><span class="line">.withColumn(<span class="string">"week"</span>, weekofyear(df(<span class="string">"transaction_date"</span>)))</span><br><span class="line">.withColumn(<span class="string">"weekday"</span>, from_unixtime(unix_timestamp(df(<span class="string">"transaction_date"</span>), <span class="string">"yyyy-MM-dd"</span>), <span class="string">"EEEEE"</span>))</span><br><span class="line">.show</span><br><span class="line"></span><br><span class="line">df</span><br><span class="line">.select(<span class="string">"transaction_date"</span>)</span><br><span class="line">.withColumn(<span class="string">"year"</span>, year(df(<span class="string">"transaction_date"</span>)))</span><br><span class="line">.withColumn(<span class="string">"weekday"</span>, from_unixtime(unix_timestamp(df(<span class="string">"transaction_date"</span>), <span class="string">"yyyy-MM-dd"</span>), <span class="string">"EEEEE"</span>))</span><br><span class="line">.select(<span class="string">"year"</span>, <span class="string">"weekday"</span>)</span><br><span class="line">.distinct</span><br><span class="line">.sort(<span class="string">"year"</span>, <span class="string">"weekday"</span>)</span><br><span class="line">.show(<span class="number">100</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="Google-Cloud"><a href="#Google-Cloud" class="headerlink" title="Google Cloud"></a>Google Cloud</h2><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">gcloud config set compute/zone asia-east1-c</span><br><span class="line"></span><br><span class="line">gcloud compute copy-files ~/spark-warehouse/* &lt;Spark cluster name&gt;:~/spark-warehouse/</span><br></pre></td></tr></table></figure>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Big-data/" rel="tag"># Big data</a>
+          
+            <a href="/tags/Spark/" rel="tag"># Spark</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/11/02/MonitorMemoryandDiskMetrics/" rel="next" title="Monitor Memory and Disk Metrics for Amazon EC2 Linux Instance">
+                <i class="fa fa-chevron-left"></i> Monitor Memory and Disk Metrics for Amazon EC2 Linux Instance
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/02/20/ProductiveSparkCluster/" rel="prev" title="Productive Spark Cluster in YARN-Client Mode">
+                Productive Spark Cluster in YARN-Client Mode <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Cubean Liu" />
+          <p class="site-author-name" itemprop="name">Cubean Liu</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">categories</span>
+              
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">tags</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cubean.liu@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>
+                  
+                    
+                      E-Mail
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.linkedin.com/in/cubean/?locale=en_US" target="_blank" title="LinkedIn">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                    
+                      LinkedIn
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cubean" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/CubeanLiu" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                    
+                      Twitter
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.facebook.com/cubean.liu" target="_blank" title="FB Page">
+                  
+                    <i class="fa fa-fw fa-facebook"></i>
+                  
+                    
+                      FB Page
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.cubeanliu.com/" title="CubeanBlog" target="_blank">CubeanBlog</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Download-Spark-with-hadoop"><span class="nav-number">1.</span> <span class="nav-text">Download Spark with hadoop</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spark-shell"><span class="nav-number">2.</span> <span class="nav-text">Spark shell</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Spark-cluster"><span class="nav-number">3.</span> <span class="nav-text">Spark cluster</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#spark-submit"><span class="nav-number">4.</span> <span class="nav-text">spark-submit</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SparkSession-exmaple"><span class="nav-number">5.</span> <span class="nav-text">SparkSession exmaple</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Read-csv-file-as-DataFrame"><span class="nav-number">6.</span> <span class="nav-text">Read csv file as DataFrame</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#1-spark-csv"><span class="nav-number">6.1.</span> <span class="nav-text">1 spark-csv</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-Parsing-CSV-in-Spark-2-0"><span class="nav-number">6.2.</span> <span class="nav-text">2 Parsing CSV in Spark 2.0</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#SQL-operations"><span class="nav-number">7.</span> <span class="nav-text">SQL operations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MySQL-operations"><span class="nav-number">8.</span> <span class="nav-text">MySQL operations</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Cloudera-Platform"><span class="nav-number">9.</span> <span class="nav-text">Cloudera Platform</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#AWS-EMR"><span class="nav-number">10.</span> <span class="nav-text">AWS EMR</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Parquet-files"><span class="nav-number">10.0.1.</span> <span class="nav-text">Parquet files</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Column-Operations"><span class="nav-number">11.</span> <span class="nav-text">Column Operations</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#select-multiple-columns-at-once"><span class="nav-number">11.1.</span> <span class="nav-text">select multiple columns at once</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#extract-day-part"><span class="nav-number">11.2.</span> <span class="nav-text">extract day part</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Google-Cloud"><span class="nav-number">12.</span> <span class="nav-text">Google Cloud</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cubean Liu</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://cubean-blog.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://cubeanliu.com/2017/11/03/SparkOperations/';
+          this.page.identifier = '2017/11/03/SparkOperations/';
+          this.page.title = 'Spark Operations';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://cubean-blog.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("DV78LWwAigdG28Tgf5PkGis3-MdYXbMMI", "p1FXgnm5B74s5PG7zf0V3t9Y");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

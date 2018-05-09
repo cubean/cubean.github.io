@@ -1,0 +1,1376 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next gemini use-motion" lang="en">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="Scala,Parallel,Thread," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.2" />
+
+
+
+
+
+
+<meta name="description" content="Motivation  Amidst the shift in recent years by processor manufacturers from single to multi-core architectures, academia and industry alike have conceded that Popular Parallel Programming remains a">
+<meta name="keywords" content="Scala,Parallel,Thread">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Scala Examples (Part I) - Parallel Programming and Thread Safety">
+<meta property="og:url" content="http://cubeanliu.com/2017/07/30/ScalaExamplePart1/index.html">
+<meta property="og:site_name" content="Cubean Blog">
+<meta property="og:description" content="Motivation  Amidst the shift in recent years by processor manufacturers from single to multi-core architectures, academia and industry alike have conceded that Popular Parallel Programming remains a">
+<meta property="og:locale" content="en">
+<meta property="og:updated_time" content="2018-05-08T00:35:26.165Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Scala Examples (Part I) - Parallel Programming and Thread Safety">
+<meta name="twitter:description" content="Motivation  Amidst the shift in recent years by processor manufacturers from single to multi-core architectures, academia and industry alike have conceded that Popular Parallel Programming remains a">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Gemini',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: 'Author'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://cubeanliu.com/2017/07/30/ScalaExamplePart1/"/>
+
+
+
+
+
+  <title>Scala Examples (Part I) - Parallel Programming and Thread Safety | Cubean Blog</title>
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', '[object Object]', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="en">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">Cubean Blog</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">Change the world with AI and IoT</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            Home
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-th"></i> <br />
+            
+            Categories
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-user"></i> <br />
+            
+            About
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            Archives
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            Tags
+          </a>
+        </li>
+      
+
+      
+        <li class="menu-item menu-item-search">
+          
+            <a href="javascript:;" class="popup-trigger">
+          
+            
+              <i class="menu-item-icon fa fa-search fa-fw"></i> <br />
+            
+            Search
+          </a>
+        </li>
+      
+    </ul>
+  
+
+  
+    <div class="site-search">
+      
+  <div class="popup search-popup local-search-popup">
+  <div class="local-search-header clearfix">
+    <span class="search-icon">
+      <i class="fa fa-search"></i>
+    </span>
+    <span class="popup-btn-close">
+      <i class="fa fa-times-circle"></i>
+    </span>
+    <div class="local-search-input-wrapper">
+      <input autocomplete="off"
+             placeholder="Searching..." spellcheck="false"
+             type="text" id="local-search-input">
+    </div>
+  </div>
+  <div id="local-search-result"></div>
+</div>
+
+
+
+    </div>
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cubeanliu.com/2017/07/30/ScalaExamplePart1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cubean Liu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cubean Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">Scala Examples (Part I) - Parallel Programming and Thread Safety</h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-07-30T00:20:37+10:00">
+                2017-07-30
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Scala/" itemprop="url" rel="index">
+                    <span itemprop="name">Scala</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/07/30/ScalaExamplePart1/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/07/30/ScalaExamplePart1/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/07/30/ScalaExamplePart1/" class="leancloud_visitors" data-flag-title="Scala Examples (Part I) - Parallel Programming and Thread Safety">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p><a href="http://docs.scala-lang.org/overviews/parallel-collections/overview.html" target="_blank" rel="noopener">Motivation</a></p>
+</blockquote>
+<p>Amidst the shift in recent years by processor manufacturers from single to multi-core architectures, academia and industry alike have conceded that Popular Parallel Programming remains a formidable challenge.</p>
+<a id="more"></a>
+<h2 id="Parallel-programming"><a href="#Parallel-programming" class="headerlink" title="Parallel programming"></a>Parallel programming</h2><h3 id="Data-Parallel"><a href="#Data-Parallel" class="headerlink" title="Data Parallel"></a>Data Parallel</h3><p>Using collection.par</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> scala.collection.parallel._</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> s1 = <span class="number">1</span> to <span class="number">10</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> s2 = s1.par</span><br><span class="line"></span><br><span class="line"><span class="comment">// Using all cpu cores</span></span><br><span class="line"><span class="keyword">val</span> cpuCores = <span class="type">Runtime</span>.getRuntime.availableProcessors()</span><br><span class="line"><span class="keyword">val</span> forkNum = <span class="keyword">if</span>(cpuCores &gt; <span class="number">2</span>) cpuCores - <span class="number">1</span> <span class="keyword">else</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line">s2.tasksupport = <span class="keyword">new</span> <span class="type">ForkJoinTaskSupport</span>(<span class="keyword">new</span> scala.concurrent.forkjoin.<span class="type">ForkJoinPool</span>(forkNum))</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> s3 = s2.map(_ * <span class="number">10</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> s5 = s1.reduce(_ - _)</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> s4 =</span><br><span class="line">  s2.reduce((a, b) =&gt; &#123;</span><br><span class="line">    println(a, b)</span><br><span class="line">    a - b</span><br><span class="line">  &#125;)</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> start1: <span class="type">Long</span> = <span class="type">System</span>.currentTimeMillis()</span><br><span class="line">s1.count(_ % <span class="number">2</span> == <span class="number">0</span>)</span><br><span class="line"><span class="keyword">val</span> timeSpan1 = <span class="type">System</span>.currentTimeMillis() - start1</span><br><span class="line"></span><br><span class="line">println(timeSpan1)</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> start2: <span class="type">Long</span> = <span class="type">System</span>.currentTimeMillis()</span><br><span class="line">s2.count(_ % <span class="number">2</span> == <span class="number">0</span>)</span><br><span class="line"><span class="keyword">val</span> timeSpan2 = <span class="type">System</span>.currentTimeMillis() - start2</span><br><span class="line"></span><br><span class="line">println(timeSpan2)</span><br></pre></td></tr></table></figure>
+<p>Output result:</p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line">import scala.collection.parallel._</span><br><span class="line"></span><br><span class="line">s1: scala.collection.immutable.Range.Inclusive = Range(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)</span><br><span class="line"></span><br><span class="line">s2: scala.collection.parallel.immutable.ParRange = ParRange(1, 2, 3, 4, 5, 6, 7, 8, 9, 10)</span><br><span class="line"></span><br><span class="line">cpuCores: Int = 4</span><br><span class="line">forkNum: Int = 3</span><br><span class="line"></span><br><span class="line">s2.tasksupport: scala.collection.parallel.TaskSupport = </span><br><span class="line">   scala.collection.parallel.ForkJoinTaskSupport@50d09fdf</span><br><span class="line"></span><br><span class="line">s3: scala.collection.parallel.immutable.ParSeq[Int] = </span><br><span class="line">   ParVector(10, 20, 30, 40, 50, 60, 70, 80, 90, 100)</span><br><span class="line"></span><br><span class="line">s5: Int = -53</span><br><span class="line"></span><br><span class="line">(4,5)</span><br><span class="line">(1,2)</span><br><span class="line">(6,7)</span><br><span class="line">			// If forkNum = 2, there will be 2 pairs picked up first. </span><br><span class="line">			// forkNum = 4 is same with 3. forkNum = 5 is same with 1.</span><br><span class="line">(3,-1) </span><br><span class="line">(8,9)</span><br><span class="line">(-1,10)</span><br><span class="line"></span><br><span class="line">(-1,-11)</span><br><span class="line">(-1,4)</span><br><span class="line">(-5,10)</span><br><span class="line"></span><br><span class="line">s4: Int = -15</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">// To simple operations <span class="keyword">in</span> collection, even the collection is big, </span><br><span class="line">// both timespans are almost same and <span class="keyword">in</span> most situations, parellel operation is slower.</span><br><span class="line"></span><br><span class="line">start1: Long = 1501309254876</span><br><span class="line">res0: Int = 5</span><br><span class="line">timeSpan1: Long = 2</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">start2: Long = 1501309254885</span><br><span class="line">res2: Int = 5</span><br><span class="line">timeSpan2: Long = 3</span><br></pre></td></tr></table></figure>
+<h3 id="Task-Parallel"><a href="#Task-Parallel" class="headerlink" title="Task Parallel"></a>Task Parallel</h3><h4 id="Using-Scala’s-parallel-collections-of-Functions"><a href="#Using-Scala’s-parallel-collections-of-Functions" class="headerlink" title="Using Scala’s parallel collections of Functions"></a>Using Scala’s parallel collections of Functions</h4><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">longTask1</span> </span>= <span class="number">1</span> + <span class="number">2</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">longTask2</span> </span>= <span class="number">1</span> * <span class="number">2</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">longTask3</span> </span>= <span class="number">1</span>f / <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> tasks = <span class="type">Vector</span>(longTask1 _, longTask2 _, longTask3 _)</span><br><span class="line"><span class="keyword">val</span> results = tasks.par.map(_()).seq</span><br></pre></td></tr></table></figure>
+<p>Result</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">results: scala.collection.immutable.<span class="type">Vector</span>[<span class="type">AnyVal</span>] = <span class="type">Vector</span>(<span class="number">3</span>, <span class="number">2</span>, <span class="number">0.5</span>)</span><br></pre></td></tr></table></figure>
+<h4 id="Task-Parallel-Function-in-Cousera-class"><a href="#Task-Parallel-Function-in-Cousera-class" class="headerlink" title="Task Parallel Function in Cousera class"></a>Task Parallel Function in Cousera class</h4><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> scala.concurrent.forkjoin.&#123;<span class="type">ForkJoinPool</span>, <span class="type">ForkJoinTask</span>, <span class="type">ForkJoinWorkerThread</span>, <span class="type">RecursiveTask</span>&#125;</span><br><span class="line"><span class="keyword">import</span> scala.util.<span class="type">DynamicVariable</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> forkJoinPool = <span class="keyword">new</span> <span class="type">ForkJoinPool</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">abstract</span> <span class="class"><span class="keyword">class</span> <span class="title">TaskScheduler</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">schedule</span></span>[<span class="type">T</span>](body: =&gt; <span class="type">T</span>): <span class="type">ForkJoinTask</span>[<span class="type">T</span>]</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">parallel</span></span>[<span class="type">A</span>, <span class="type">B</span>](taskA: =&gt; <span class="type">A</span>, taskB: =&gt; <span class="type">B</span>): (<span class="type">A</span>, <span class="type">B</span>) = &#123;</span><br><span class="line">    <span class="keyword">val</span> right = task &#123;</span><br><span class="line">      taskB</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">val</span> left = taskA</span><br><span class="line">    (left, right.join())</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">DefaultTaskScheduler</span> <span class="keyword">extends</span> <span class="title">TaskScheduler</span> </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">schedule</span></span>[<span class="type">T</span>](body: =&gt; <span class="type">T</span>): <span class="type">ForkJoinTask</span>[<span class="type">T</span>] = &#123;</span><br><span class="line">    <span class="keyword">val</span> t = <span class="keyword">new</span> <span class="type">RecursiveTask</span>[<span class="type">T</span>] &#123;</span><br><span class="line">      <span class="function"><span class="keyword">def</span> <span class="title">compute</span> </span>= body</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">Thread</span>.currentThread <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> wt: <span class="type">ForkJoinWorkerThread</span> =&gt;</span><br><span class="line">        t.fork()</span><br><span class="line">      <span class="keyword">case</span> _ =&gt;</span><br><span class="line">        forkJoinPool.execute(t)</span><br><span class="line">    &#125;</span><br><span class="line">    t</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> scheduler =</span><br><span class="line">  <span class="keyword">new</span> <span class="type">DynamicVariable</span>[<span class="type">TaskScheduler</span>](<span class="keyword">new</span> <span class="type">DefaultTaskScheduler</span>)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">task</span></span>[<span class="type">T</span>](body: =&gt; <span class="type">T</span>): <span class="type">ForkJoinTask</span>[<span class="type">T</span>] = &#123;</span><br><span class="line">  scheduler.value.schedule(body)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">parallel</span></span>[<span class="type">A</span>](tasks: (() =&gt; <span class="type">A</span>)*): <span class="type">Seq</span>[<span class="type">A</span>] = &#123;</span><br><span class="line">  <span class="keyword">if</span> (tasks.isEmpty) <span class="type">Nil</span></span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">val</span> pendingTasks = tasks.tail.map(t =&gt; task &#123;</span><br><span class="line">      t()</span><br><span class="line">    &#125;)</span><br><span class="line">    tasks.head() +: pendingTasks.map(_.join())</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">longTask</span></span>() = &#123;</span><br><span class="line">  println(<span class="string">"starting longTask execution"</span>)</span><br><span class="line">  <span class="type">Thread</span>.sleep(<span class="number">1000</span>)</span><br><span class="line">  <span class="number">42</span> + <span class="type">Math</span>.random</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Use a list of tasks:</span></span><br><span class="line"><span class="keyword">val</span> tasks = <span class="type">List</span>(longTask _, longTask _, longTask _, longTask _)</span><br><span class="line"><span class="keyword">val</span> results = parallel(tasks: _*)</span><br><span class="line">println(results)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> start = <span class="type">System</span>.currentTimeMillis()</span><br><span class="line"></span><br><span class="line"><span class="comment">// or pass any number of individual tasks directly:</span></span><br><span class="line">println(parallel(longTask, longTask, longTask))</span><br><span class="line">println(parallel(longTask, longTask))</span><br><span class="line">println(parallel(longTask))</span><br><span class="line">println(parallel())</span><br><span class="line"></span><br><span class="line">println(<span class="string">s"Done in <span class="subst">$&#123;System.currentTimeMillis() - start&#125;</span> ms"</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="Thread-Safety"><a href="#Thread-Safety" class="headerlink" title="Thread Safety"></a>Thread Safety</h2><h3 id="synchronization"><a href="#synchronization" class="headerlink" title="synchronization"></a>synchronization</h3><p>Mutexes provide ownership semantics. When you enter a mutex, you own it. The most common way of using a mutex in the JVM is by synchronizing on something. In this case, we’ll synchronize on our Person.</p>
+<p>In the JVM, you can synchronize on any instance that’s not null.</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>(<span class="params">var name: <span class="type">String</span></span>) </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">set</span></span>(changedName: <span class="type">String</span>) &#123;</span><br><span class="line">    <span class="keyword">this</span>.synchronized &#123;</span><br><span class="line">      name = changedName</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="volatile"><a href="#volatile" class="headerlink" title="volatile"></a>volatile</h3><p>With Java 5’s change to the memory model, volatile and synchronized are basically identical except with volatile, nulls are allowed.</p>
+<p>synchronized allows for more fine-grained locking. volatile synchronizes on every access.</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>(<span class="params">@volatile var name: <span class="type">String</span></span>) </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">set</span></span>(changedName: <span class="type">String</span>) &#123;</span><br><span class="line">    name = changedName</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="AtomicReference"><a href="#AtomicReference" class="headerlink" title="AtomicReference"></a>AtomicReference</h3><p>Also in Java 5, a whole raft of low-level concurrency primitives were added. One of them is an AtomicReference class</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> java.util.concurrent.atomic.<span class="type">AtomicReference</span></span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Person</span>(<span class="params">val name: <span class="type">AtomicReference</span>[<span class="type">String</span>]</span>) </span>&#123;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">set</span></span>(changedName: <span class="type">String</span>) &#123;</span><br><span class="line">    name.set(changedName)</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h3 id="Does-this-cost-anything"><a href="#Does-this-cost-anything" class="headerlink" title="Does this cost anything?"></a>Does this cost anything?</h3><p>@AtomicReference is the most costly of these two choices since you have to go through method dispatch to access values.</p>
+<p>volatile and synchronized are built on top of Java’s built-in monitors. Monitors cost very little if there’s no contention. Since synchronized allows you more fine-grained control over when you synchronize, there will be less contention so synchronized tends to be the cheapest option.</p>
+<p>When you enter synchronized points, access volatile references, or deference AtomicReferences, Java forces the processor to flush their cache lines and provide a consistent view of data.</p>
+<h2 id="scala-collection-concurrent-Map"><a href="#scala-collection-concurrent-Map" class="headerlink" title="scala.collection.concurrent.Map"></a>scala.collection.concurrent.Map</h2><h3 id="scala-collection-concurrent-TrieMap"><a href="#scala-collection-concurrent-TrieMap" class="headerlink" title="scala.collection.concurrent.TrieMap"></a>scala.collection.concurrent.TrieMap</h3><figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">val</span> his = scala.collection.concurrent.<span class="type">TrieMap</span>[<span class="type">Int</span>, <span class="type">Int</span>]()</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">fib</span></span>(i: <span class="type">Int</span>): <span class="type">Int</span> = &#123;</span><br><span class="line">  <span class="keyword">if</span> (his.contains(i)) his(i)</span><br><span class="line">  <span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">val</span> r = i <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="number">0</span> =&gt; <span class="number">1</span></span><br><span class="line">      <span class="keyword">case</span> <span class="number">1</span> =&gt; <span class="number">1</span></span><br><span class="line">      <span class="keyword">case</span> n =&gt; fib(n - <span class="number">1</span>) + fib(n - <span class="number">2</span>)</span><br><span class="line">    &#125;</span><br><span class="line">    his += i -&gt; r</span><br><span class="line">    r</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">sumFib</span></span>(i: <span class="type">Int</span>): <span class="type">Int</span> = &#123;</span><br><span class="line">  require(i &gt;= <span class="number">0</span>)</span><br><span class="line">  (<span class="number">0</span> to i).map(fib).sum</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>The scala.collection.concurrent.Map trait is not meant to be mixed-in with an existing mutable Scala Map to obtain a thread-safe version of the map instance. The SynchronizedMap mixin existed for this purpose before 2.11, but is now deprecated.</p>
+<p>Currently, Scala has the scala.collection.concurrent.TrieMap implementation for the scala.collection.concurrent.Map interface, but can wrap Java classes as well.</p>
+<p>The scala.collection.concurrent.Map, in versions prior to 2.10 known as scala.collection.mutable.ConcurrentMap, interface is used when you:</p>
+<p>want to implement your own concurrent, thread-safe Map from scratch<br>want to wrap an existing Java concurrent map implementation:<br>E.g:</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> scala.collection._</span><br><span class="line"><span class="keyword">import</span> scala.collection.convert.decorateAsScala._</span><br><span class="line"><span class="keyword">import</span> java.util.concurrent.<span class="type">ConcurrentHashMap</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">val</span> map: concurrent.<span class="type">Map</span>[<span class="type">String</span>, <span class="type">String</span>] = <span class="keyword">new</span> <span class="type">ConcurrentHashMap</span>().asScala</span><br></pre></td></tr></table></figure>
+<p>want to write generic code that works concurrent maps, and don’t want to commit to a specific implementation:<br>E.g.:</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> scala.collection._</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">foo</span></span>(map: concurrent.<span class="type">Map</span>[<span class="type">String</span>, <span class="type">String</span>]) = map.putIfAbsent(<span class="string">""</span>, <span class="string">""</span>)</span><br><span class="line"></span><br><span class="line">foo(<span class="keyword">new</span> concurrent.<span class="type">TrieMap</span>)</span><br><span class="line">foo(<span class="keyword">new</span> java.util.concurrent.<span class="type">ConcurrentSkipListMap</span>().asScala)</span><br></pre></td></tr></table></figure>
+<p>you could implement your own wrapper around a single-threaded mutable map implementation by using synchronized (but you would need to ensure that your program is accessing the mutable map only through this wrapper and never directly).<br>E.g.:</p>
+<figure class="highlight scala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MySynchronizedMap</span>[<span class="type">K</span>, <span class="type">V</span>](<span class="params">private val underlying: mutable.<span class="type">Map</span>[<span class="type">K</span>, <span class="type">V</span>]</span>)</span></span><br><span class="line"><span class="class"><span class="keyword">extends</span> <span class="title">concurrent</span>.<span class="title">Map</span>[<span class="type">K</span>, <span class="type">V</span>] </span>&#123;</span><br><span class="line">  <span class="keyword">private</span> <span class="keyword">val</span> monitor = <span class="keyword">new</span> <span class="type">AnyRef</span></span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">putIfAbsent</span></span>(k: <span class="type">K</span>,v: <span class="type">V</span>): <span class="type">Option</span>[<span class="type">String</span>] = monitor.synchronized &#123;</span><br><span class="line">    underlying.get(k) <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> s: <span class="type">Some</span>[<span class="type">V</span>] =&gt; s</span><br><span class="line">      <span class="keyword">case</span> <span class="type">None</span> =&gt;</span><br><span class="line">        underlying(k) = v</span><br><span class="line">        <span class="type">None</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="function"><span class="keyword">def</span> <span class="title">remove</span></span>(k: <span class="type">K</span>, v: <span class="type">V</span>): <span class="type">Boolean</span> = monitor.synchronized &#123;</span><br><span class="line">    underlying.get(k) <span class="keyword">match</span> &#123;</span><br><span class="line">      <span class="keyword">case</span> <span class="type">Some</span>(v0) <span class="keyword">if</span> v == v0 =&gt; underlying.remove(k); <span class="literal">true</span></span><br><span class="line">      <span class="keyword">case</span> <span class="type">None</span> =&gt; <span class="literal">false</span></span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="comment">// etc.</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Scala/" rel="tag"># Scala</a>
+          
+            <a href="/tags/Parallel/" rel="tag"># Parallel</a>
+          
+            <a href="/tags/Thread/" rel="tag"># Thread</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/25/MACEnvironmentforScalaDevelopment/" rel="next" title="MAC Development Environment for Scala">
+                <i class="fa fa-chevron-left"></i> MAC Development Environment for Scala
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/08/03/ScalaExamplePart2/" rel="prev" title="Scala Example (Part II) - Language points and Transformation">
+                Scala Example (Part II) - Language points and Transformation <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        
+<script>
+  with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='//bdimg.share.baidu.com/static/api/js/share.js?cdnversion='+~(-new Date()/36e5)];
+</script>
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div id="disqus_thread">
+        <noscript>
+          Please enable JavaScript to view the
+          <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a>
+        </noscript>
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            Table of Contents
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            Overview
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.png"
+               alt="Cubean Liu" />
+          <p class="site-author-name" itemprop="name">Cubean Liu</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives/">
+                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-name">posts</span>
+              </a>
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-categories">
+              
+                <span class="site-state-item-count">3</span>
+                <span class="site-state-item-name">categories</span>
+              
+            </div>
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              
+                <span class="site-state-item-count">19</span>
+                <span class="site-state-item-name">tags</span>
+              
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+            
+              <span class="links-of-author-item">
+                <a href="mailto:cubean.liu@gmail.com" target="_blank" title="E-Mail">
+                  
+                    <i class="fa fa-fw fa-envelope"></i>
+                  
+                    
+                      E-Mail
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.linkedin.com/in/cubean/?locale=en_US" target="_blank" title="LinkedIn">
+                  
+                    <i class="fa fa-fw fa-globe"></i>
+                  
+                    
+                      LinkedIn
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://github.com/cubean" target="_blank" title="GitHub">
+                  
+                    <i class="fa fa-fw fa-github"></i>
+                  
+                    
+                      GitHub
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://twitter.com/CubeanLiu" target="_blank" title="Twitter">
+                  
+                    <i class="fa fa-fw fa-twitter"></i>
+                  
+                    
+                      Twitter
+                    
+                </a>
+              </span>
+            
+              <span class="links-of-author-item">
+                <a href="https://www.facebook.com/cubean.liu" target="_blank" title="FB Page">
+                  
+                    <i class="fa fa-fw fa-facebook"></i>
+                  
+                    
+                      FB Page
+                    
+                </a>
+              </span>
+            
+          
+        </div>
+
+        
+        
+
+        
+        
+          <div class="links-of-blogroll motion-element links-of-blogroll-inline">
+            <div class="links-of-blogroll-title">
+              <i class="fa  fa-fw fa-globe"></i>
+              
+            </div>
+            <ul class="links-of-blogroll-list">
+              
+                <li class="links-of-blogroll-item">
+                  <a href="http://www.cubeanliu.com/" title="CubeanBlog" target="_blank">CubeanBlog</a>
+                </li>
+              
+            </ul>
+          </div>
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Parallel-programming"><span class="nav-number">1.</span> <span class="nav-text">Parallel programming</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#Data-Parallel"><span class="nav-number">1.1.</span> <span class="nav-text">Data Parallel</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Task-Parallel"><span class="nav-number">1.2.</span> <span class="nav-text">Task Parallel</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#Using-Scala’s-parallel-collections-of-Functions"><span class="nav-number">1.2.1.</span> <span class="nav-text">Using Scala’s parallel collections of Functions</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Task-Parallel-Function-in-Cousera-class"><span class="nav-number">1.2.2.</span> <span class="nav-text">Task Parallel Function in Cousera class</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Thread-Safety"><span class="nav-number">2.</span> <span class="nav-text">Thread Safety</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronization"><span class="nav-number">2.1.</span> <span class="nav-text">synchronization</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#volatile"><span class="nav-number">2.2.</span> <span class="nav-text">volatile</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AtomicReference"><span class="nav-number">2.3.</span> <span class="nav-text">AtomicReference</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Does-this-cost-anything"><span class="nav-number">2.4.</span> <span class="nav-text">Does this cost anything?</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#scala-collection-concurrent-Map"><span class="nav-number">3.</span> <span class="nav-text">scala.collection.concurrent.Map</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#scala-collection-concurrent-TrieMap"><span class="nav-number">3.1.</span> <span class="nav-text">scala.collection.concurrent.TrieMap</span></a></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy;  2017 - 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Cubean Liu</span>
+</div>
+
+
+<div class="powered-by">
+  Powered by <a class="theme-link" href="https://hexo.io">Hexo</a>
+</div>
+
+<div class="theme-info">
+  Theme -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Gemini
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.2"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+    
+      <script id="dsq-count-scr" src="https://cubean-blog.disqus.com/count.js" async></script>
+    
+
+    
+      <script type="text/javascript">
+        var disqus_config = function () {
+          this.page.url = 'http://cubeanliu.com/2017/07/30/ScalaExamplePart1/';
+          this.page.identifier = '2017/07/30/ScalaExamplePart1/';
+          this.page.title = 'Scala Examples (Part I) - Parallel Programming and Thread Safety';
+        };
+        var d = document, s = d.createElement('script');
+        s.src = 'https://cubean-blog.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', '' + +new Date());
+        (d.head || d.body).appendChild(s);
+      </script>
+    
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+  
+
+  <script type="text/javascript">
+    // Popup Window;
+    var isfetched = false;
+    var isXml = true;
+    // Search DB path;
+    var search_path = "";
+    if (search_path.length === 0) {
+      search_path = "search.xml";
+    } else if (/json$/i.test(search_path)) {
+      isXml = false;
+    }
+    var path = "/" + search_path;
+    // monitor main search box;
+
+    var onPopupClose = function (e) {
+      $('.popup').hide();
+      $('#local-search-input').val('');
+      $('.search-result-list').remove();
+      $('#no-result').remove();
+      $(".local-search-pop-overlay").remove();
+      $('body').css('overflow', '');
+    }
+
+    function proceedsearch() {
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay"></div>')
+        .css('overflow', 'hidden');
+      $('.search-popup-overlay').click(onPopupClose);
+      $('.popup').toggle();
+      var $localSearchInput = $('#local-search-input');
+      $localSearchInput.attr("autocapitalize", "none");
+      $localSearchInput.attr("autocorrect", "off");
+      $localSearchInput.focus();
+    }
+
+    // search function;
+    var searchFunc = function(path, search_id, content_id) {
+      'use strict';
+
+      // start loading animation
+      $("body")
+        .append('<div class="search-popup-overlay local-search-pop-overlay">' +
+          '<div id="search-loading-icon">' +
+          '<i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>' +
+          '</div>' +
+          '</div>')
+        .css('overflow', 'hidden');
+      $("#search-loading-icon").css('margin', '20% auto 0 auto').css('text-align', 'center');
+
+      $.ajax({
+        url: path,
+        dataType: isXml ? "xml" : "json",
+        async: true,
+        success: function(res) {
+          // get the contents from search data
+          isfetched = true;
+          $('.popup').detach().appendTo('.header-inner');
+          var datas = isXml ? $("entry", res).map(function() {
+            return {
+              title: $("title", this).text(),
+              content: $("content",this).text(),
+              url: $("url" , this).text()
+            };
+          }).get() : res;
+          var input = document.getElementById(search_id);
+          var resultContent = document.getElementById(content_id);
+          var inputEventFunction = function() {
+            var searchText = input.value.trim().toLowerCase();
+            var keywords = searchText.split(/[\s\-]+/);
+            if (keywords.length > 1) {
+              keywords.push(searchText);
+            }
+            var resultItems = [];
+            if (searchText.length > 0) {
+              // perform local searching
+              datas.forEach(function(data) {
+                var isMatch = false;
+                var hitCount = 0;
+                var searchTextCount = 0;
+                var title = data.title.trim();
+                var titleInLowerCase = title.toLowerCase();
+                var content = data.content.trim().replace(/<[^>]+>/g,"");
+                var contentInLowerCase = content.toLowerCase();
+                var articleUrl = decodeURIComponent(data.url);
+                var indexOfTitle = [];
+                var indexOfContent = [];
+                // only match articles with not empty titles
+                if(title != '') {
+                  keywords.forEach(function(keyword) {
+                    function getIndexByWord(word, text, caseSensitive) {
+                      var wordLen = word.length;
+                      if (wordLen === 0) {
+                        return [];
+                      }
+                      var startPosition = 0, position = [], index = [];
+                      if (!caseSensitive) {
+                        text = text.toLowerCase();
+                        word = word.toLowerCase();
+                      }
+                      while ((position = text.indexOf(word, startPosition)) > -1) {
+                        index.push({position: position, word: word});
+                        startPosition = position + wordLen;
+                      }
+                      return index;
+                    }
+
+                    indexOfTitle = indexOfTitle.concat(getIndexByWord(keyword, titleInLowerCase, false));
+                    indexOfContent = indexOfContent.concat(getIndexByWord(keyword, contentInLowerCase, false));
+                  });
+                  if (indexOfTitle.length > 0 || indexOfContent.length > 0) {
+                    isMatch = true;
+                    hitCount = indexOfTitle.length + indexOfContent.length;
+                  }
+                }
+
+                // show search results
+
+                if (isMatch) {
+                  // sort index by position of keyword
+
+                  [indexOfTitle, indexOfContent].forEach(function (index) {
+                    index.sort(function (itemLeft, itemRight) {
+                      if (itemRight.position !== itemLeft.position) {
+                        return itemRight.position - itemLeft.position;
+                      } else {
+                        return itemLeft.word.length - itemRight.word.length;
+                      }
+                    });
+                  });
+
+                  // merge hits into slices
+
+                  function mergeIntoSlice(text, start, end, index) {
+                    var item = index[index.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    var hits = [];
+                    var searchTextCountInSlice = 0;
+                    while (position + word.length <= end && index.length != 0) {
+                      if (word === searchText) {
+                        searchTextCountInSlice++;
+                      }
+                      hits.push({position: position, length: word.length});
+                      var wordEnd = position + word.length;
+
+                      // move to next position of hit
+
+                      index.pop();
+                      while (index.length != 0) {
+                        item = index[index.length - 1];
+                        position = item.position;
+                        word = item.word;
+                        if (wordEnd > position) {
+                          index.pop();
+                        } else {
+                          break;
+                        }
+                      }
+                    }
+                    searchTextCount += searchTextCountInSlice;
+                    return {
+                      hits: hits,
+                      start: start,
+                      end: end,
+                      searchTextCount: searchTextCountInSlice
+                    };
+                  }
+
+                  var slicesOfTitle = [];
+                  if (indexOfTitle.length != 0) {
+                    slicesOfTitle.push(mergeIntoSlice(title, 0, title.length, indexOfTitle));
+                  }
+
+                  var slicesOfContent = [];
+                  while (indexOfContent.length != 0) {
+                    var item = indexOfContent[indexOfContent.length - 1];
+                    var position = item.position;
+                    var word = item.word;
+                    // cut out 100 characters
+                    var start = position - 20;
+                    var end = position + 80;
+                    if(start < 0){
+                      start = 0;
+                    }
+                    if (end < position + word.length) {
+                      end = position + word.length;
+                    }
+                    if(end > content.length){
+                      end = content.length;
+                    }
+                    slicesOfContent.push(mergeIntoSlice(content, start, end, indexOfContent));
+                  }
+
+                  // sort slices in content by search text's count and hits' count
+
+                  slicesOfContent.sort(function (sliceLeft, sliceRight) {
+                    if (sliceLeft.searchTextCount !== sliceRight.searchTextCount) {
+                      return sliceRight.searchTextCount - sliceLeft.searchTextCount;
+                    } else if (sliceLeft.hits.length !== sliceRight.hits.length) {
+                      return sliceRight.hits.length - sliceLeft.hits.length;
+                    } else {
+                      return sliceLeft.start - sliceRight.start;
+                    }
+                  });
+
+                  // select top N slices in content
+
+                  var upperBound = parseInt('1');
+                  if (upperBound >= 0) {
+                    slicesOfContent = slicesOfContent.slice(0, upperBound);
+                  }
+
+                  // highlight title and content
+
+                  function highlightKeyword(text, slice) {
+                    var result = '';
+                    var prevEnd = slice.start;
+                    slice.hits.forEach(function (hit) {
+                      result += text.substring(prevEnd, hit.position);
+                      var end = hit.position + hit.length;
+                      result += '<b class="search-keyword">' + text.substring(hit.position, end) + '</b>';
+                      prevEnd = end;
+                    });
+                    result += text.substring(prevEnd, slice.end);
+                    return result;
+                  }
+
+                  var resultItem = '';
+
+                  if (slicesOfTitle.length != 0) {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + highlightKeyword(title, slicesOfTitle[0]) + "</a>";
+                  } else {
+                    resultItem += "<li><a href='" + articleUrl + "' class='search-result-title'>" + title + "</a>";
+                  }
+
+                  slicesOfContent.forEach(function (slice) {
+                    resultItem += "<a href='" + articleUrl + "'>" +
+                      "<p class=\"search-result\">" + highlightKeyword(content, slice) +
+                      "...</p>" + "</a>";
+                  });
+
+                  resultItem += "</li>";
+                  resultItems.push({
+                    item: resultItem,
+                    searchTextCount: searchTextCount,
+                    hitCount: hitCount,
+                    id: resultItems.length
+                  });
+                }
+              })
+            };
+            if (keywords.length === 1 && keywords[0] === "") {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-search fa-5x" /></div>'
+            } else if (resultItems.length === 0) {
+              resultContent.innerHTML = '<div id="no-result"><i class="fa fa-frown-o fa-5x" /></div>'
+            } else {
+              resultItems.sort(function (resultLeft, resultRight) {
+                if (resultLeft.searchTextCount !== resultRight.searchTextCount) {
+                  return resultRight.searchTextCount - resultLeft.searchTextCount;
+                } else if (resultLeft.hitCount !== resultRight.hitCount) {
+                  return resultRight.hitCount - resultLeft.hitCount;
+                } else {
+                  return resultRight.id - resultLeft.id;
+                }
+              });
+              var searchResultList = '<ul class=\"search-result-list\">';
+              resultItems.forEach(function (result) {
+                searchResultList += result.item;
+              })
+              searchResultList += "</ul>";
+              resultContent.innerHTML = searchResultList;
+            }
+          }
+
+          if ('auto' === 'auto') {
+            input.addEventListener('input', inputEventFunction);
+          } else {
+            $('.search-icon').click(inputEventFunction);
+            input.addEventListener('keypress', function (event) {
+              if (event.keyCode === 13) {
+                inputEventFunction();
+              }
+            });
+          }
+
+          // remove loading animation
+          $(".local-search-pop-overlay").remove();
+          $('body').css('overflow', '');
+
+          proceedsearch();
+        }
+      });
+    }
+
+    // handle and trigger popup window;
+    $('.popup-trigger').click(function(e) {
+      e.stopPropagation();
+      if (isfetched === false) {
+        searchFunc(path, 'local-search-input', 'local-search-result');
+      } else {
+        proceedsearch();
+      };
+    });
+
+    $('.popup-btn-close').click(onPopupClose);
+    $('.popup').click(function(e){
+      e.stopPropagation();
+    });
+    $(document).on('keyup', function (event) {
+      var shouldDismissSearchPopup = event.which === 27 &&
+        $('.search-popup').is(':visible');
+      if (shouldDismissSearchPopup) {
+        onPopupClose();
+      }
+    });
+  </script>
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.4.js"></script>
+  <script>AV.initialize("DV78LWwAigdG28Tgf5PkGis3-MdYXbMMI", "p1FXgnm5B74s5PG7zf0V3t9Y");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
