@@ -326,6 +326,177 @@
   
   
   <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://cubeanliu.com/2017/08/08/MySQL-in-Ubuntu-Cheatsheet/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Cubean Liu">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.png">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Cubean Blog">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+                
+                <a class="post-title-link" href="/2017/08/08/MySQL-in-Ubuntu-Cheatsheet/" itemprop="url">MySQL Installation and Commands</a></h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">Posted on</span>
+              
+              <time title="Post created" itemprop="dateCreated datePublished" datetime="2017-08-08T11:48:57+10:00">
+                2017-08-08
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">In</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/MySQL/" itemprop="url" rel="index">
+                    <span itemprop="name">MySQL</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                <span class="post-meta-divider">|</span>
+                <span class="post-meta-item-icon">
+                  <i class="fa fa-comment-o"></i>
+                </span>
+                <a href="/2017/08/08/MySQL-in-Ubuntu-Cheatsheet/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count disqus-comment-count"
+                        data-disqus-identifier="2017/08/08/MySQL-in-Ubuntu-Cheatsheet/" itemprop="commentCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+          
+             <span id="/2017/08/08/MySQL-in-Ubuntu-Cheatsheet/" class="leancloud_visitors" data-flag-title="MySQL Installation and Commands">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">Visitors </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          <h2 id="1-Mount-additional-disk-to-mysql-data-folder"><a href="#1-Mount-additional-disk-to-mysql-data-folder" class="headerlink" title="1. Mount additional disk to mysql data folder"></a>1. Mount additional disk to mysql data folder</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">$ sudo fdisk -l</span><br><span class="line">$ sudo mkfs.ext4 /dev/xvdb</span><br><span class="line">$ sudo mkdir /var/lib/mysql</span><br><span class="line">$ sudo vi /etc/fstab</span><br><span class="line">/dev/xvdb      /var/lib/mysql         ext4    defaults,nofail 0 2</span><br><span class="line"></span><br><span class="line">$ sudo mount -a</span><br><span class="line">$ df -h</span><br><span class="line"></span><br><span class="line">$ sudo rm -rf /var/lib/mysql/*</span><br></pre></td></tr></table></figure>
+<h2 id="2-Install-MySQL-in-Redhat"><a href="#2-Install-MySQL-in-Redhat" class="headerlink" title="2. Install MySQL in Redhat"></a>2. Install MySQL in Redhat</h2><p><a href="https://dev.mysql.com/doc/refman/5.7/en/linux-installation-yum-repo.html" target="_blank" rel="noopener">Official Doc</a></p>
+<figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">$ curl -O https://repo.mysql.com//mysql57-community-release-el7-11.noarch.rpm</span><br><span class="line">$ sudo yum -y localinstall mysql57-community-release-el7-11.noarch.rpm</span><br><span class="line">$ sudo yum repolist all | grep mysql</span><br><span class="line"></span><br><span class="line">$ sudo yum -y install mysql-community-server</span><br><span class="line"></span><br><span class="line">$ sudo service mysqld start</span><br><span class="line">$ sudo service mysqld status</span><br><span class="line"></span><br><span class="line">$ sudo grep <span class="string">'temporary password'</span> /var/<span class="built_in">log</span>/mysqld.log</span><br><span class="line">$ mysql -uroot -p</span><br><span class="line">mysql&gt; ALTER USER <span class="string">'root'</span>@<span class="string">'localhost'</span> IDENTIFIED BY <span class="string">'&lt;ROOTPsw&gt;'</span>;</span><br><span class="line"></span><br><span class="line">mysql&gt; SHOW VARIABLES LIKE <span class="string">'validate_password%'</span>;</span><br><span class="line">mysql&gt; SET GLOBAL validate_password_policy=LOW;</span><br></pre></td></tr></table></figure>
+<h2 id="3-Install-MySQL-in-Ubuntu"><a href="#3-Install-MySQL-in-Ubuntu" class="headerlink" title="3. Install MySQL in Ubuntu"></a>3. Install MySQL in Ubuntu</h2><figure class="highlight sh"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">$ sudo apt-get update</span><br><span class="line">$ sudo apt-get install mysql-server</span><br><span class="line"></span><br><span class="line">// Set administrator password</span><br><span class="line">$ sudo mysql_secure_installation</span><br><span class="line"></span><br><span class="line">// Validate password</span><br><span class="line">$ mysqladmin -p -u root version</span><br></pre></td></tr></table></figure>
+          <!--noindex-->
+          <div class="post-button text-center">
+            <a class="btn" href="/2017/08/08/MySQL-in-Ubuntu-Cheatsheet/#more" rel="contents">
+              Read more &raquo;
+            </a>
+          </div>
+          <!--/noindex-->
+        
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+    
+      
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
     <link itemprop="mainEntityOfPage" href="http://cubeanliu.com/2017/08/04/Big-Data-Related-Cheatsheet-Part-I/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -1195,7 +1366,7 @@
           
             <div class="site-state-item site-state-posts">
               <a href="/archives/">
-                <span class="site-state-item-count">15</span>
+                <span class="site-state-item-count">16</span>
                 <span class="site-state-item-name">posts</span>
               </a>
             </div>
